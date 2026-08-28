@@ -25,7 +25,6 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let parsed = parse_args(&args[1..]);
 
-    // demo with hardcoded args since no CLI input given
     let demo_args = vec![
         "--name".to_string(), "Zaid".to_string(),
         "--verbose".to_string(),
