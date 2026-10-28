@@ -1,0 +1,2 @@
+pub fn wrap_words(s:&str,width:usize)->Vec<String>{let(mut out,mut line)=(Vec::new(),String::new());for w in s.split_whitespace(){if !line.is_empty()&&line.chars().count()+1+w.chars().count()>width{out.push(std::mem::take(&mut line))}if !line.is_empty(){line.push(' ')}line.push_str(w)}if !line.is_empty(){out.push(line)}out}
+#[cfg(test)]mod tests{use super::*;#[test]fn wraps(){assert_eq!(wrap_words("one two three",7),vec!["one two","three"])}}
