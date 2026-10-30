@@ -26,10 +26,10 @@ impl IntervalIndex {
     pub fn insert(&mut self, incoming: Interval) {
         self.ranges.push(incoming);
         self.ranges.sort_by_key(|range| range.start);
-        let mut merged = Vec::with_capacity(self.ranges.len());
+        let mut merged: Vec<Interval> = Vec::with_capacity(self.ranges.len());
         for range in self.ranges.drain(..) {
             match merged.last_mut() {
-                Some(last) if range.start <= last.end + 1 => last.end = last.end.max(range.end),
+                Some(last) if range.start <= last.end || last.end.checked_add(1).is_some_and(|next| range.start <= next) => last.end = last.end.max(range.end),
                 _ => merged.push(range),
             }
         }
@@ -45,4 +45,17 @@ impl IntervalIndex {
     }
 
     pub fn ranges(&self) -> &[Interval] { &self.ranges }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn merges_intervals_at_i64_max_without_overflow() {
+        let mut index = IntervalIndex::default();
+        index.insert(Interval::new(i64::MAX, i64::MAX));
+        index.insert(Interval::new(i64::MAX - 1, i64::MAX - 1));
+        assert_eq!(index.ranges(), &[Interval::new(i64::MAX - 1, i64::MAX)]);
+    }
 }

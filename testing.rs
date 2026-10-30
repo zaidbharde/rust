@@ -10,7 +10,8 @@ pub fn is_prime(n: u64) -> bool {
     if n == 2 { return true;  }
     if n % 2 == 0 { return false; }
     let mut i = 3;
-    while i * i <= n {
+    // Division avoids overflowing when checking large u64 values.
+    while i <= n / i {
         if n % i == 0 { return false; }
         i += 2;
     }
@@ -64,6 +65,7 @@ mod tests {
 
         for &p in &primes     { assert!(is_prime(p),  "{} should be prime", p); }
         for &c in &composites { assert!(!is_prime(c), "{} should not be prime", c); }
+        assert!(!is_prime(u64::MAX));
     }
 
     // ── String ────────────────────────────────────────────────────────
